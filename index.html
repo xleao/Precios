@@ -35,7 +35,7 @@
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
 
-    /* Desktop/Tablet tal cual */
+    /* Desktop/Tablet */
     .grid{ display:grid; gap:14px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, 1fr); height: calc(100vh - 170px); }
     @media (min-width:980px){ .grid{grid-template-columns: repeat(4, 1fr);} }
 
@@ -49,7 +49,7 @@
       padding:16px;
       isolation:isolate;
       transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-      aspect-ratio: 1 / 1;            /* 👈 Desktop: cuadradas */
+      aspect-ratio: 1 / 1; /* Desktop cuadradas */
       display:flex; flex-direction:column;
       overflow:hidden;
     }
@@ -93,10 +93,19 @@
     .close{ appearance:none; background:transparent; border:1px solid var(--line); color:var(--ink); padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:800 }
     .close:hover{ background:#174673 }
 
-    .modal-body{ padding:16px; display:grid; gap:16px; grid-template-columns: 1fr 320px; align-items:stretch; height: calc(100% - 58px); overflow:hidden }
+    /* ⬇️ Cambios: ahora el cuerpo del modal tiene scroll propio */
+    .modal-body{
+      padding:16px;
+      display:grid; gap:16px; grid-template-columns: 1fr 320px;
+      align-items:start;
+      height: calc(100% - 58px);
+      overflow:auto;                       /* ✅ scroll interno */
+      -webkit-overflow-scrolling: touch;   /* ✅ inercia iOS */
+      overscroll-behavior: contain;
+    }
     .big{ font-size:24px; font-weight:900; margin:0 }
     .muted{ color:var(--muted) }
-    .fulltext{ white-space:pre-line; font-size:15px; line-height:1.5; overflow:hidden; margin:0 }
+    .fulltext{ white-space:pre-line; font-size:15px; line-height:1.5; margin:0 }
 
     .side{ display:flex; flex-direction:column; justify-content:space-between; gap:14px; border:1px dashed #2f6ebd; border-radius:14px; padding:14px; background: linear-gradient(180deg, rgba(154,194,255,.06), rgba(26,52,90,.28)); min-height:100% }
     .kv{ display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; }
@@ -106,32 +115,24 @@
     .cta{ flex:1; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:linear-gradient(180deg, rgba(74,147,255,.2), rgba(74,147,255,.06)); color:var(--white); font-weight:800; cursor:pointer }
     .less{ flex:1; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:transparent; color:var(--ink); font-weight:800; cursor:pointer }
 
-    /* ==== SOLO MÓVIL (≤680px): con scroll y tarjetas altura auto ==== */
+    /* SOLO MÓVIL: scroll general y tarjetas altura auto (resto igual) */
     @media (max-width:680px){
-      html,body{height:auto; overflow:auto;}               /* página con scroll */
+      html,body{height:auto; overflow:auto;}
       .wrap{ padding: 14px; height:auto; }
       .title{ margin-bottom:12px; }
       .title h1{ font-size:30px; }
-
       .grid{ grid-template-columns: 1fr; grid-template-rows: none; height:auto; gap:16px; }
-
-      .card{ aspect-ratio:auto; min-height:auto; padding:18px; }  /* 👈 sin cuadrado forzado */
-      .badge{ font-size:12px; padding:6px 10px; }
-      .name{ font-size:20px; }
-      .price{ font-size:24px; }
-      .summary{ -webkit-line-clamp: 6; max-height:none; mask-image:none; } /* texto cómodo */
+      .card{ aspect-ratio:auto; min-height:auto; padding:18px; }
+      .summary{ -webkit-line-clamp: 6; max-height:none; mask-image:none; }
       .btn{ padding:12px 14px; font-size:14px; }
 
       dialog#modal{ width:96vw; height:90vh; }
-      .modal-body{ grid-template-columns: 1fr; gap:12px; height: calc(100% - 58px); overflow:auto; }
-      .fulltext{ font-size:14px; line-height:1.5; }
-      .side{ min-height:auto; }
+      .modal-body{ grid-template-columns: 1fr; } /* panel abajo en móvil */
+      .cta-row{ grid-template-columns: 1fr; gap:8px; }
       .kv span{ font-size:15px; }
       .kv strong{ font-size:17px; }
-      .cta-row{ grid-template-columns: 1fr; gap:8px; }
     }
 
-    /* Accesibilidad focus */
     .btn:focus-visible, .close:focus-visible, .cta:focus-visible, .less:focus-visible{ outline: 3px solid #9ac2ff88; outline-offset:2px }
   </style>
 </head>
@@ -140,7 +141,6 @@
     <div class="title"><h1>Paquetes</h1></div>
 
     <section class="grid" id="cards">
-      <!-- Paquete 1 -->
       <article class="card" data-id="p1">
         <div class="head">
           <span class="badge"><span class="dot"></span> Hasta 3 ventanas</span>
@@ -157,7 +157,6 @@
         </div>
       </article>
 
-      <!-- Paquete 2 -->
       <article class="card" data-id="p2">
         <div class="head">
           <span class="badge"><span class="dot"></span> Hasta 4 ventanas</span>
@@ -174,7 +173,6 @@
         </div>
       </article>
 
-      <!-- Paquete 3 -->
       <article class="card" data-id="p3">
         <div class="head">
           <span class="badge"><span class="dot"></span> Hasta 5 ventanas</span>
@@ -191,7 +189,6 @@
         </div>
       </article>
 
-      <!-- Paquete 4 -->
       <article class="card" data-id="p4">
         <div class="head">
           <span class="badge"><span class="dot"></span> Hasta 6 ventanas</span>
@@ -212,7 +209,6 @@
     <footer class="muted" style="text-align:center; font-size:12px; opacity:.9;">© 2025</footer>
   </div>
 
-  <!-- Modal -->
   <dialog id="modal" aria-labelledby="mtitle">
     <div class="modal-head">
       <div class="modal-title">
@@ -236,7 +232,6 @@
     </div>
   </dialog>
 
-  <!-- Font Awesome -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
