@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paquetes</title>
+  <style>
+    :root{
+      --bg:#132a45;
+      --card:#173a67;
+      --ink:#f4f8ff;
+      --muted:#cfe1ff;
+      --line:#2a5a96;
+      --brand:#4a93ff;
+      --brand-2:#9ac2ff;
+      --white:#ffffff;
+      --ok:#19d27c;
+      --shadow: 0 14px 40px rgba(0,0,0,.24);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; overflow:hidden}
+    body{
+      margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans";
+      background: radial-gradient(1200px 800px at 80% -10%, #21528d 0%, #132a45 55%, #10233b 100%);
+      color:var(--ink); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    }
+    .wrap{max-width:1200px; margin:0 auto; padding:16px 24px; height:100vh; display:grid; grid-template-rows: auto 1fr auto; gap:12px}
+    .title{display:grid; place-items:center}
+    .title h1{margin:0; font-weight:900; letter-spacing:.6px; font-size: clamp(26px, 3vw, 40px); background: linear-gradient(180deg, var(--white), #e3efff 60%, #cfe1ff); -webkit-background-clip: text; background-clip: text; color: transparent}
+
+    /* ===== Grid ===== */
+    .grid{display:grid; gap:18px; grid-template-columns: repeat(4, minmax(240px, 1fr)); align-items:stretch}
+    @media (max-width: 1024px){ .grid{ grid-template-columns: repeat(2, minmax(240px, 1fr)); } }
+    @media (max-width: 640px){ .grid{ grid-template-columns: 1fr; } }
+
+    /* ===== Cards ===== */
+    .card{position:relative; background:linear-gradient(180deg, rgba(154,194,255,0.06), rgba(74,147,255,0.06)), var(--card); border:1px solid var(--line); border-radius:22px; box-shadow:var(--shadow); padding:16px; isolation:isolate; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; aspect-ratio:1/1; display:flex; flex-direction:column; overflow:hidden}
+    .card::before{content:""; position:absolute; inset:-1px; border-radius:22px; z-index:-1; background: radial-gradient(120px 120px at 20% 10%, rgba(154,194,255,.32), transparent 60%), radial-gradient(160px 140px at 85% 85%, rgba(74,147,255,.22), transparent 60%); filter: blur(12px)}
+    .card:hover{ transform: translateY(-4px); border-color:#2f6ebd; box-shadow:0 18px 50px rgba(0,0,0,.30)}
+
+    .head{display:flex; flex-direction:column; gap:6px}
+    .name{font-weight:900; letter-spacing:.4px; font-size: clamp(16px,1.6vw,20px)}
+    .price{font-size: clamp(22px,2.2vw,28px); font-weight:900}
+    .badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink); background:#1c4f8f; border:1px solid #2f6ebd; border-radius:999px; padding:6px 10px}
+    .dot{width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 2px rgba(25,210,124,.18)}
+
+    .body{ display:flex; flex-direction:column; gap:10px; min-height:0; flex:1 }
+    .summary{ margin-top:6px; font-size:14px; line-height:1.45 }
+
+    .actions{ display:flex; gap:10px; margin-top:auto; padding-top:8px }
+    .btn{ flex:1; text-align:center; padding:12px 14px; border-radius:12px; cursor:pointer; border:1px solid var(--line); user-select:none; font-weight:800; letter-spacing:.3px; font-size:14px; background:linear-gradient(180deg, rgba(74,147,255,.18), rgba(74,147,255,.06)); color:var(--white); transition: filter .15s ease, transform .12s ease, background .2s ease, border-color .2s ease }
+    .btn:hover{ filter:brightness(1.08)} .btn:active{ transform: translateY(1px)} .btn.secondary{ background:transparent; color:var(--ink) }
+
+    /* ===== Modal ===== */
+    dialog#modal{ width:min(1100px, 96vw); height:min(90vh, 780px); border:1px solid var(--line); padding:0; border-radius:20px; background: var(--card); color:var(--ink); box-shadow: var(--shadow); overflow:hidden }
+    dialog::backdrop{ background: rgba(8,18,35,.55); backdrop-filter: blur(10px) saturate(1.2) }
+    .modal-head{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 16px; border-bottom:1px solid var(--line)}
+    .modal-title{ display:flex; align-items:center; gap:10px }
+    .pill{ background:#1f5ca7; border:1px solid #2e78d8; color:var(--ink); padding:6px 10px; border-radius:999px; font-size:12px }
+    .close{ appearance:none; background:transparent; border:1px solid var(--line); color:var(--ink); padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:800 }
+
+    .modal-body{ padding:16px; display:grid; gap:16px; grid-template-columns: 1fr 320px; align-items:stretch; height: calc(100% - 58px); overflow:hidden }
+    .fulltext{ white-space:pre-line; font-size:14px; line-height:1.38; margin:0; align-self:stretch; overflow:hidden }
+    .side{ display:flex; flex-direction:column; justify-content:space-between; gap:12px; border:1px dashed #2f6ebd; border-radius:14px; padding:14px; background: linear-gradient(180deg, rgba(154,194,255,.06), rgba(26,52,90,.28)); min-height:100% }
+    .kv{ display:grid; grid-template-columns: 1fr auto; gap:8px; font-size:14px }
+    .cta-row{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:auto }
+    .cta{ flex:1; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:linear-gradient(180deg, rgba(74,147,255,.2), rgba(74,147,255,.06)); color:var(--white); font-weight:800; cursor:pointer }
+    .less{ flex:1; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:transparent; color:var(--ink); font-weight:800; cursor:pointer }
+
+    footer{ text-align:center; font-size:12px; opacity:.9 }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title"><h1>Paquetes</h1></div>
+
+    <section class="grid" id="cards">
+      <!-- Card 1 -->
+      <article class="card" data-id="p1">
+        <div class="head">
+          <span class="badge"><span class="dot"></span> Entrega: 1 semana</span>
+          <div class="name">Paquete 1</div>
+          <div class="price"><b>S/ 400</b></div>
+        </div>
+        <div class="body">
+          <p class="summary">Ideal para empezar: claro y rápido. 📱</p>
+          <div class="actions">
+            <button class="btn" data-open="p1">+Ver más</button>
+            <button class="btn secondary" data-contact>Contactar</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="card" data-id="p2">
+        <div class="head">
+          <span class="badge"><span class="dot"></span> Entrega: 1–2 semanas</span>
+          <div class="name">Paquete 2</div>
+          <div class="price"><b>S/ 600</b></div>
+        </div>
+        <div class="body">
+          <p class="summary">Para crecer: más secciones y orden. 🧭</p>
+          <div class="actions">
+            <button class="btn" data-open="p2">+Ver más</button>
+            <button class="btn secondary" data-contact>Contactar</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="card" data-id="p3">
+        <div class="head">
+          <span class="badge"><span class="dot"></span> Entrega: 2–3 semanas</span>
+          <div class="name">Paquete 3</div>
+          <div class="price"><b>S/ 800</b></div>
+        </div>
+        <div class="body">
+          <p class="summary">Destaca: portafolio y textos afinados. 📸</p>
+          <div class="actions">
+            <button class="btn" data-open="p3">+Ver más</button>
+            <button class="btn secondary" data-contact>Contactar</button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="card" data-id="p4">
+        <div class="head">
+          <span class="badge"><span class="dot"></span> Entrega: 4 semanas</span>
+          <div class="name">Paquete 4</div>
+          <div class="price"><b>S/ 1250</b></div>
+        </div>
+        <div class="body">
+          <p class="summary">Premium: micro‑animaciones e IA. 🤖</p>
+          <div class="actions">
+            <button class="btn" data-open="p4">+Ver más</button>
+            <button class="btn secondary" data-contact>Contactar</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <footer class="muted">© 2025</footer>
+  </div>
+
+  <!-- Modal -->
+  <dialog id="modal" aria-labelledby="mtitle">
+    <div class="modal-head">
+      <div class="modal-title">
+        <span class="pill" id="mpill">Entrega</span>
+        <h2 id="mtitle" class="big">Paquete</h2>
+      </div>
+      <button class="close" data-close>×</button>
+    </div>
+    <div class="modal-body">
+      <div class="fulltext" id="mfull"></div>
+      <aside class="side">
+        <div class="kv"><span>Precio</span> <strong id="mprice">S/ —</strong></div>
+        <div class="kv"><span>Ventanas</span> <strong id="mwin">—</strong></div>
+        <div class="kv"><span>Avances</span> <strong id="mupd">—</strong></div>
+        <div class="cta-row">
+          <button class="cta" id="mcontact">Pedir este paquete</button>
+          <button class="less" data-close>Ver menos</button>
+        </div>
+      </aside>
+    </div>
+  </dialog>
+
+  <!-- Iconos -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const FULL = {
+      p1: `Paquete 1— S/ 400 — Entrega: 1 semana
+Hasta 3 ventanas
+Incluye (completo):
+Diseño a tu estilo (colores, logo, fotos) 🎨
+Se ve perfecto en celular y computadora 📱💻
+Botón de WhatsApp ☎️
+Ventana “Reservar cita” 📅
+Publicada y lista para compartir 🌐
+1 ronda de revisiones
+Se mostrarán avances diarios del trabajo (capturas o vista previa). 🔄`,
+      p2: `Paquete 2 — S/ 600 — Entrega: 1-2 semanas
+Hasta 4 ventanas
+Diseño a tu estilo (colores, logo, fotos) 🎨
+Se ve perfecto en celular y computadora 📱💻
+Botón de WhatsApp ☎️
+Ventana “Reservar cita” 📅
+Publicada y lista para compartir 🌐
+Texto y contenido ordenado para que se entienda fácil ✍️
+Navegación superior por secciones (menú con anclas) 🔖
+Galería pequeña o testimonios (a elegir) 🖼️⭐
+2 rondas de revisiones
+Se mostrarán avances cada 2 días (capturas o vista previa). 🔄`,
+      p3: `Paquete 3— S/ 800 — Entrega: 2-3 semanas
+Hasta 5 ventanas
+Diseño a tu estilo (colores, logo, fotos) 🎨
+Se ve perfecto en celular y computadora 📱💻
+Botón de WhatsApp ☎️
+Ventana “Reservar cita” 📅
+Publicada y lista para compartir 🌐
+Texto y contenido ordenado ✍️
+Navegación superior por secciones 🔖
+Galería pequeña o testimonios 🖼️⭐
+Textos afinados para mayor claridad 🧩
+Mini-portafolio (hasta 8 ítems) 📸
+Contacto visible al desplazarte (barra/íconos fijos) 🎯
+3 rondas de revisiones
+Se mostrarán avances por semana (capturas o vista previa). 🔄`,
+      p4: `Paquete 4 — S/ 1250 — Entrega: 4 semanas
+Hasta 6 ventanas
+Diseño a tu estilo (colores, logo, fotos) 🎨
+Se ve perfecto en celular y computadora 📱💻
+Botón de WhatsApp ☎️
+Ventana “Reservar cita” 📅
+Publicada y lista para compartir 🌐
+Texto y contenido ordenado ✍️
+Navegación superior por secciones 🔖
+Galería/testimonios 🖼️⭐
+Textos afinados para mayor claridad 🧩
+Portafolio ampliado (hasta 12 ítems) 🗂️
+Transiciones y micro-animaciones sutiles para una experiencia fluida ✨
+Consultor con IA 🤖 (asistente en tu web para responder preguntas frecuentes y orientar a tus clientes).
+Se mostrarán avances semanales (capturas o vista previa), con demo intermedia y borrador final antes de la entrega. 🔄`
+    };
+    const META = {
+      p1: { precio:"S/ 400", entrega:"1 semana", ventanas:"Hasta 3", avances:"Diarios" },
+      p2: { precio:"S/ 600", entrega:"1–2 semanas", ventanas:"Hasta 4", avances:"Cada 2 días" },
+      p3: { precio:"S/ 800", entrega:"2–3 semanas", ventanas:"Hasta 5", avances:"Semanales" },
+      p4: { precio:"S/ 1250", entrega:"4 semanas", ventanas:"Hasta 6", avances:"Semanales + demo" }
+    };
+
+    const modal = document.querySelector('#modal');
+    const mtitle = document.querySelector('#mtitle');
+    const mprice = document.querySelector('#mprice');
+    const mpill = document.querySelector('#mpill');
+    const mfull = document.querySelector('#mfull');
+    const mwin = document.querySelector('#mwin');
+    const mupd = document.querySelector('#mupd');
+    const mcontact = document.querySelector('#mcontact');
+
+    function openModal(id){
+      const meta = META[id];
+      if(!meta) return;
+      mtitle.textContent = id.toUpperCase().replace('P','Paquete ');
+      mprice.textContent = meta.precio;
+      mpill.textContent = `Entrega: ${meta.entrega}`;
+      mwin.textContent = meta.ventanas;
+      mupd.textContent = meta.avances;
+      mfull.textContent = FULL[id];
+      mcontact.onclick = ()=>{
+        const msg = encodeURIComponent(`Hola, me interesa el ${mtitle.textContent} (${meta.precio}). ¿Está disponible?`);
+        window.open(`https://wa.me/51943836076?text=${msg}`, '_blank');
+      }
+      modal.showModal();
+    }
+
+    document.querySelectorAll('[data-open]').forEach(btn=> btn.addEventListener('click',()=> openModal(btn.getAttribute('data-open'))));
+    document.querySelectorAll('.card').forEach(card=> card.addEventListener('click', (e)=>{ if(e.target.closest('button')) return; openModal(card.dataset.id); }));
+
+    document.querySelectorAll('[data-close]').forEach(b=> b.addEventListener('click', ()=> modal.close()));
+    modal.addEventListener('click', (e)=>{ if(e.target.tagName === 'DIALOG') modal.close(); });
+
+    document.querySelectorAll('[data-contact]').forEach(b=> b.addEventListener('click', ()=>{
+      const card = b.closest('.card');
+      const id = card?.dataset?.id;
+      const msg = encodeURIComponent(`Hola, quiero más información sobre ${id?('Paquete '+id.replace('p','')):'un paquete web'}.`);
+      window.open(`https://wa.me/51943836076?text=${msg}`, '_blank');
+    }));
+  </script>
+</body>
+</html>
