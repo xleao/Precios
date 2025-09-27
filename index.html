@@ -35,8 +35,8 @@
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
 
+    /* ====== DESKTOP/TABLET tal cual ====== */
     .grid{ display:grid; gap:14px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, 1fr); height: calc(100vh - 170px); }
-    @media (max-width:680px){ .grid{grid-template-columns: 1fr;} }
     @media (min-width:980px){ .grid{grid-template-columns: repeat(4, 1fr);} }
 
     /* ===== Tarjetas cuadradas con RESUMEN ===== */
@@ -46,7 +46,7 @@
       padding:16px; isolation:isolate; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
       aspect-ratio: 1 / 1; display:flex; flex-direction:column; overflow:hidden;
     }
-    .card::before{ /* halo */
+    .card::before{
       content:""; position:absolute; inset:-1px; border-radius:22px; z-index:-1;
       background: radial-gradient(120px 120px at 20% 10%, rgba(154,194,255,.32), transparent 60%),
                   radial-gradient(160px 140px at 85% 85%, rgba(74,147,255,.22), transparent 60%);
@@ -99,6 +99,31 @@
     .cta-row{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:auto }
     .cta{ flex:1; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:linear-gradient(180deg, rgba(74,147,255,.2), rgba(74,147,255,.06)); color:var(--white); font-weight:800; cursor:pointer }
     .less{ flex:1; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:transparent; color:var(--ink); font-weight:800; cursor:pointer }
+
+    /* ======== SOLO PARA CELULAR (≤680px). Desktop queda intacto. ======== */
+    @media (max-width:680px){
+      html,body{height:auto; overflow:auto;}        /* permite scroll general en móvil */
+      .wrap{ padding: 12px 14px; height:auto; }
+      .title{ margin-bottom:10px; }
+      .title h1{ font-size:28px; }
+
+      .grid{ grid-template-columns: 1fr; grid-template-rows: none; height:auto; gap:12px; }
+
+      .badge{ font-size:11px; padding:5px 9px; }
+      .name{ font-size:18px; }
+      .price{ font-size:22px; }
+      .summary{ -webkit-line-clamp: 4; max-height:6.2em; }
+      .btn{ padding:11px 12px; font-size:13.5px; }
+
+      /* Modal a una columna, sin scroll interno */
+      dialog#modal{ width:96vw; height:90vh; }
+      .modal-body{ grid-template-columns: 1fr; gap:12px; height: calc(100% - 58px); }
+      .fulltext{ font-size:14px; line-height:1.45; }
+      .side{ min-height:auto; }
+      .kv span{ font-size:15px; }
+      .kv strong{ font-size:17px; }
+      .cta-row{ grid-template-columns: 1fr; gap:8px; }
+    }
 
     /* Accesibilidad focus */
     .btn:focus-visible, .close:focus-visible, .cta:focus-visible, .less:focus-visible{ outline: 3px solid #9ac2ff88; outline-offset:2px }
@@ -194,7 +219,6 @@
     <div class="modal-body">
       <div class="fulltext" id="mfull"></div>
       <aside class="side">
-        <!-- NUEVA FILA: Entrega -->
         <div class="kv"><span>Entrega</span> <strong id="mdeliv">—</strong></div>
         <div class="kv"><span>Precio</span> <strong id="mprice">S/ —</strong></div>
         <div class="kv"><span>Ventanas</span> <strong id="mwin">—</strong></div>
@@ -211,7 +235,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
-    // Texto COMPLETO tal como lo enviaste (con emojis)
     const FULL = {
       p1: `Paquete 1— S/ 450 — Entrega: 1 semana
 💠 Hasta 3 ventanas
@@ -289,20 +312,19 @@ Se mostrarán avances semanales (capturas o vista previa), con demo intermedia y
     const mfull  = document.querySelector('#mfull');
     const mwin   = document.querySelector('#mwin');
     const mupd   = document.querySelector('#mupd');
-    const mdeliv = document.querySelector('#mdeliv'); // NUEVO
+    const mdeliv = document.querySelector('#mdeliv');
     const mcontact = document.querySelector('#mcontact');
 
-    // Abrir modal desde botón o click en tarjeta
     function openModal(id){
       const meta = META[id];
       if(!meta) return;
       mtitle.textContent = id.toUpperCase().replace('P','Paquete ');
       mprice.textContent = meta.precio;
       mpill.textContent  = `Entrega: ${meta.entrega}`;
-      mdeliv.textContent = meta.entrega;     // NUEVO (mostrar entrega en panel)
+      mdeliv.textContent = meta.entrega;
       mwin.textContent   = meta.ventanas;
       mupd.textContent   = meta.avances;
-      mfull.textContent  = FULL[id]; // respeta saltos de línea y emojis
+      mfull.textContent  = FULL[id];
       mcontact.onclick = ()=>{
         const msg = encodeURIComponent(`Hola, me interesa el ${mtitle.textContent} (${meta.precio}). ¿Está disponible?`);
         window.open(`https://wa.me/51943836076?text=${msg}`, '_blank');
@@ -316,22 +338,18 @@ Se mostrarán avances semanales (capturas o vista previa), con demo intermedia y
 
     document.querySelectorAll('.card').forEach(card=>{
       card.addEventListener('click', (e)=>{
-        // Evita doble apertura si se hizo click en un botón dentro
         if(e.target.closest('button')) return;
         openModal(card.dataset.id);
       })
     })
 
-    // Cerrar modal
     document.querySelectorAll('[data-close]').forEach(b=> b.addEventListener('click', ()=> modal.close()))
     modal.addEventListener('click', (e)=>{ if(e.target.tagName === 'DIALOG') modal.close(); })
 
-    // Botón Contactar desde tarjeta
     document.querySelectorAll('[data-contact]').forEach(b=>{
       b.addEventListener('click', ()=>{
         const card = b.closest('.card');
         const id = card?.dataset?.id;
-        const meta = META[id] || {};
         const msg = encodeURIComponent(`Hola, quiero más información sobre ${id?('Paquete '+id.replace('p','')):'un paquete web'}.`);
         window.open(`https://wa.me/51943836076?text=${msg}`, '_blank');
       })
