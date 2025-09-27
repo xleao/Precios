@@ -6,19 +6,19 @@
   <title>Paquetes</title>
   <style>
     :root{
-      --bg:#132a45;          /* azul oscuro (ligeramente más claro) */
-      --card:#173a67;        /* azul tarjeta */
-      --ink:#f4f8ff;         /* texto principal */
-      --muted:#cfe1ff;       /* texto secundario */
-      --line:#2a5a96;        /* bordes suaves */
-      --brand:#4a93ff;       /* azul acento */
-      --brand-2:#9ac2ff;     /* azul acento claro */
+      --bg:#132a45;
+      --card:#173a67;
+      --ink:#f4f8ff;
+      --muted:#cfe1ff;
+      --line:#2a5a96;
+      --brand:#4a93ff;
+      --brand-2:#9ac2ff;
       --white:#ffffff;
       --ok:#19d27c;
       --shadow: 0 14px 40px rgba(0,0,0,.24);
     }
     *{box-sizing:border-box}
-    html,body{height:100%; overflow:hidden}
+    html,body{height:100%; overflow:hidden} /* DESKTOP sin scroll */
     body{
       margin:0;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans";
@@ -35,16 +35,23 @@
       -webkit-background-clip: text; background-clip: text; color: transparent;
     }
 
-    /* ====== DESKTOP/TABLET tal cual ====== */
+    /* Desktop/Tablet tal cual */
     .grid{ display:grid; gap:14px; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, 1fr); height: calc(100vh - 170px); }
     @media (min-width:980px){ .grid{grid-template-columns: repeat(4, 1fr);} }
 
-    /* ===== Tarjetas cuadradas con RESUMEN ===== */
+    /* Tarjetas */
     .card{
-      position:relative; background:linear-gradient(180deg, rgba(154,194,255,0.06), rgba(74,147,255,0.06)), var(--card);
-      border:1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow);
-      padding:16px; isolation:isolate; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-      aspect-ratio: 1 / 1; display:flex; flex-direction:column; overflow:hidden;
+      position:relative;
+      background:linear-gradient(180deg, rgba(154,194,255,0.06), rgba(74,147,255,0.06)), var(--card);
+      border:1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding:16px;
+      isolation:isolate;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      aspect-ratio: 1 / 1;            /* 👈 Desktop: cuadradas */
+      display:flex; flex-direction:column;
+      overflow:hidden;
     }
     .card::before{
       content:""; position:absolute; inset:-1px; border-radius:22px; z-index:-1;
@@ -63,7 +70,8 @@
 
     .body{ display:flex; flex-direction:column; gap:8px; min-height:0; flex:1; }
     .summary{
-      margin-top:6px; color:var(--ink); font-size:14px; line-height:1.45; position:relative; overflow:hidden; display:-webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; max-height:7.5em;
+      margin-top:6px; color:var(--ink); font-size:14px; line-height:1.45; position:relative; overflow:hidden;
+      display:-webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; max-height:7.5em;
       mask-image: linear-gradient(180deg, #000 78%, transparent);
     }
 
@@ -76,7 +84,7 @@
     .btn.secondary{ background:transparent; color:var(--ink); }
     .btn .fa{ margin-right:6px }
 
-    /* ===== Modal (ventanita) ===== */
+    /* Modal */
     dialog#modal{ width:min(1000px, 96vw); height:min(88vh, 760px); border:1px solid var(--line); padding:0; border-radius:20px; background: var(--card); color:var(--ink); box-shadow: var(--shadow); overflow:hidden }
     dialog::backdrop{ background: rgba(8,18,35,.55); backdrop-filter: blur(10px) saturate(1.2) }
     .modal-head{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 16px; border-bottom:1px solid var(--line)}
@@ -90,35 +98,33 @@
     .muted{ color:var(--muted) }
     .fulltext{ white-space:pre-line; font-size:15px; line-height:1.5; overflow:hidden; margin:0 }
 
-    /* Panel derecho (mejorado tamaño + negrita) */
     .side{ display:flex; flex-direction:column; justify-content:space-between; gap:14px; border:1px dashed #2f6ebd; border-radius:14px; padding:14px; background: linear-gradient(180deg, rgba(154,194,255,.06), rgba(26,52,90,.28)); min-height:100% }
     .kv{ display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; }
     .kv span{ font-size:16px; font-weight:700; opacity:.95; }
     .kv strong{ font-size:18px; font-weight:900; }
-
     .cta-row{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:auto }
     .cta{ flex:1; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:linear-gradient(180deg, rgba(74,147,255,.2), rgba(74,147,255,.06)); color:var(--white); font-weight:800; cursor:pointer }
     .less{ flex:1; border:1px solid var(--line); border-radius:12px; padding:12px 14px; background:transparent; color:var(--ink); font-weight:800; cursor:pointer }
 
-    /* ======== SOLO PARA CELULAR (≤680px). Desktop queda intacto. ======== */
+    /* ==== SOLO MÓVIL (≤680px): con scroll y tarjetas altura auto ==== */
     @media (max-width:680px){
-      html,body{height:auto; overflow:auto;}        /* permite scroll general en móvil */
-      .wrap{ padding: 12px 14px; height:auto; }
-      .title{ margin-bottom:10px; }
-      .title h1{ font-size:28px; }
+      html,body{height:auto; overflow:auto;}               /* página con scroll */
+      .wrap{ padding: 14px; height:auto; }
+      .title{ margin-bottom:12px; }
+      .title h1{ font-size:30px; }
 
-      .grid{ grid-template-columns: 1fr; grid-template-rows: none; height:auto; gap:12px; }
+      .grid{ grid-template-columns: 1fr; grid-template-rows: none; height:auto; gap:16px; }
 
-      .badge{ font-size:11px; padding:5px 9px; }
-      .name{ font-size:18px; }
-      .price{ font-size:22px; }
-      .summary{ -webkit-line-clamp: 4; max-height:6.2em; }
-      .btn{ padding:11px 12px; font-size:13.5px; }
+      .card{ aspect-ratio:auto; min-height:auto; padding:18px; }  /* 👈 sin cuadrado forzado */
+      .badge{ font-size:12px; padding:6px 10px; }
+      .name{ font-size:20px; }
+      .price{ font-size:24px; }
+      .summary{ -webkit-line-clamp: 6; max-height:none; mask-image:none; } /* texto cómodo */
+      .btn{ padding:12px 14px; font-size:14px; }
 
-      /* Modal a una columna, sin scroll interno */
       dialog#modal{ width:96vw; height:90vh; }
-      .modal-body{ grid-template-columns: 1fr; gap:12px; height: calc(100% - 58px); }
-      .fulltext{ font-size:14px; line-height:1.45; }
+      .modal-body{ grid-template-columns: 1fr; gap:12px; height: calc(100% - 58px); overflow:auto; }
+      .fulltext{ font-size:14px; line-height:1.5; }
       .side{ min-height:auto; }
       .kv span{ font-size:15px; }
       .kv strong{ font-size:17px; }
@@ -131,12 +137,10 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="title">
-      <h1>Paquetes</h1>
-    </div>
+    <div class="title"><h1>Paquetes</h1></div>
 
     <section class="grid" id="cards">
-      <!-- ===== Paquete 1 (RESUMEN) ===== -->
+      <!-- Paquete 1 -->
       <article class="card" data-id="p1">
         <div class="head">
           <span class="badge"><span class="dot"></span> Hasta 3 ventanas</span>
@@ -153,7 +157,7 @@
         </div>
       </article>
 
-      <!-- ===== Paquete 2 ===== -->
+      <!-- Paquete 2 -->
       <article class="card" data-id="p2">
         <div class="head">
           <span class="badge"><span class="dot"></span> Hasta 4 ventanas</span>
@@ -170,7 +174,7 @@
         </div>
       </article>
 
-      <!-- ===== Paquete 3 ===== -->
+      <!-- Paquete 3 -->
       <article class="card" data-id="p3">
         <div class="head">
           <span class="badge"><span class="dot"></span> Hasta 5 ventanas</span>
@@ -187,7 +191,7 @@
         </div>
       </article>
 
-      <!-- ===== Paquete 4 ===== -->
+      <!-- Paquete 4 -->
       <article class="card" data-id="p4">
         <div class="head">
           <span class="badge"><span class="dot"></span> Hasta 6 ventanas</span>
@@ -204,10 +208,11 @@
         </div>
       </article>
     </section>
+
     <footer class="muted" style="text-align:center; font-size:12px; opacity:.9;">© 2025</footer>
   </div>
 
-  <!-- ===== Modal Detalles (con emojis) ===== -->
+  <!-- Modal -->
   <dialog id="modal" aria-labelledby="mtitle">
     <div class="modal-head">
       <div class="modal-title">
@@ -231,7 +236,7 @@
     </div>
   </dialog>
 
-  <!-- Iconos Font Awesome (CDN) -->
+  <!-- Font Awesome -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
@@ -247,7 +252,6 @@ Incluye :
 💠 1 ronda de revisiones
 🔰El dominio se paga aparte (com ,pe ,etc)
 💠 Se mostrarán avances diarios del trabajo (capturas o vista previa). 🔄`,
-
       p2: `Paquete 2 — S/ 600 — Entrega: 1-2 semanas
 💠 Hasta 4 ventanas
 Incluye :
